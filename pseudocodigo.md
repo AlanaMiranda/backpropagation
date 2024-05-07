@@ -38,14 +38,11 @@ Link de acesso a este pseudocódigo no <a href='https://github.com/AlanaMiranda/
 
 ### Pseudocódigo
 ```
-Função BACKPROPAGATION (entrada_X, entrada_Y,
+Função BACKPROPAGATION (entrada_X, saida_Y,
                         neuronios_camada_escondida,
                         funcao_de_ativacao,
                         taxa_de_aprendizagem,
                         epocas)
-
-    # Normalização dos dados de entrada
-    entrada_X <- normalizacao(entrada_X)
 
     # Divisão dos dados em 60-20-20
     dataset <- concatenar(entrada_X, entrada_Y)
@@ -53,6 +50,9 @@ Função BACKPROPAGATION (entrada_X, entrada_Y,
     x_treino, y_treino <- separar(treino)
     x_validacao, y_validacao <- separar(validacao)
     x_teste, y_teste <- separar(teste)
+
+    # Normalização dos dados de entrada
+    entrada_X <- normalizacao(entrada_X)
 
     # Inicialização arbitrária dos pesos e biases
     # Pesos e biases da primeira camada
@@ -75,10 +75,10 @@ Função BACKPROPAGATION (entrada_X, entrada_Y,
 
             # Saída e ativação na camada de saída
             S2 <- propagacao_direta(Z1, W2, B2)
-            Z2 <- ativacao(S2, funcao_de_ativacao) 
+            Y <- ativacao(S2, funcao_de_ativacao) 
 
             # Cálculo do erro na saída
-            erro_atual <- calcular_erro(y, Z2)
+            erro_atual <- calcular_erro(y, Y)
 
             Se erro_atual > erro_anterior:
                 Parar o treinamento
@@ -101,7 +101,7 @@ Função BACKPROPAGATION (entrada_X, entrada_Y,
                 W1 <- W1 - taxa_de_aprendizagem * derivada_Erro_W1
                 B1 <- B1 - taxa_de_aprendizagem * derivada_Erro_B1
 
-    Retornar Z2, erros_validacao, pesos
+    Retornar Y, erros_validacao, pesos
 
 ```
 </br>
