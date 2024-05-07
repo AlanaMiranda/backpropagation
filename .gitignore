@@ -1,7 +1,9 @@
-# OS files
+# MacOS files
 .DS_Store
 
 # Temporary files
 *.tmp
 
+
+*/__pycache__/
 

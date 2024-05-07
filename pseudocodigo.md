@@ -10,17 +10,16 @@
 <div style=text-align:right>
 <b>Professora: </b> ADRIANA ROSA GARCEZ CASTRO </br>
 <b>Alunos:</b> </br>
-Alana Miranda Medeiros. Email: <i>alanamirandaufpa@gmail.com</i> </br>
-Joaquim Armando Dlima Viana. Email: <i>jviana@unilurio.ac.mz</i> </br>
+Alana Miranda Medeiros </br> E-mail: <i><a>alanamirandaufpa@gmail.com></a></i> </br>
+Joaquim Armando Dlima Viana</br> E-mail: <i><a>jviana@unilurio.ac.mz</a></i> </br>
 </div>
 
 </br>
 </br>
 </br>
 
-
 <div style=text-align:center>Maio de 2024</br>
-Link de acesso a este pseudocódigo no <a href='https://github.com/AlanaMiranda/backpropagation'>Github: </a> </div>
+Link de acesso a este pseudocódigo no <a href='https://github.com/AlanaMiranda/backpropagation'><b>Github</b> </a> </div>
 
 </br>
 </br>
@@ -38,7 +37,7 @@ Link de acesso a este pseudocódigo no <a href='https://github.com/AlanaMiranda/
 </br>
 
 ### Pseudocódigo
-```python
+```
 Função BACKPROPAGATION (entrada_X, entrada_Y,
                         neuronios_camada_escondida,
                         funcao_de_ativacao,
