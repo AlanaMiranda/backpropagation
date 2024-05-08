@@ -1,3 +1,11 @@
+'''
+Este módulo contém funções de operações entre camadas da rede:
+- Inicialização de pesos e bias
+- Propagação direta (forward)
+- Avaliação do erro na saída (Erro Médio Quadrático)
+- Repropagação (backward)
+'''
+
 import numpy as np
 
 

@@ -1,3 +1,9 @@
+'''
+Este módulo contém funções de pré-processamento do dos dados
+- Divisão da base em treino, validação e teste
+- Normalização (min-max)
+'''
+
 import numpy as np
 import pandas as pd
 
@@ -8,7 +14,6 @@ import pandas as pd
 
 
 # Normalizacao dos dados de entrada
-
 #Normalização entre 0 e 1
 def min_max_normalizacao(df):
     df_normalizado = df.copy()

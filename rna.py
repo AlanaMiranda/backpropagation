@@ -1,3 +1,8 @@
+'''
+Módulo principal do algoritimo.
+Contém a função principal backpropagation
+'''
+
 from backpropagation.avaliacoes import *
 from backpropagation.funcoes import *
 from backpropagation.camadas import *

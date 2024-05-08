@@ -1,3 +1,9 @@
+'''
+Este módulo contém funções de ativação da saída do neurónio e suas derivas
+- ReLu
+- Tangente Hiperbólico
+- Sigmoide/Logística
+'''
 import numpy as np
 
 
