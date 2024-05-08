@@ -1,6 +1,6 @@
 '''
-Este módulo contém funções de avaliação do modelo:
-- Matriz de confusão;
+Este módulo contém funções de avaliação do modelo
+- Matriz de confusão
 - Acurácia
 - Gráfico do erro médio quadrático ao longo do treinamento
 '''

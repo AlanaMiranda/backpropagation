@@ -1,5 +1,5 @@
 '''
-Este módulo contém funções de pré-processamento do dos dados
+Este módulo contém funções de pré-processamento dos dados
 - Divisão da base em treino, validação e teste
 - Normalização (min-max)
 '''

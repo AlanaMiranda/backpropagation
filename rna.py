@@ -1,5 +1,5 @@
 '''
-Módulo principal do algoritimo.
+Módulo principal do algoritmo.
 Contém a função principal backpropagation
 '''
 
