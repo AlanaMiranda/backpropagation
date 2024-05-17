@@ -36,9 +36,8 @@ def propagacao_direta (entrada: np.ndarray, pesos: np.ndarray, bias:np.ndarray) 
 # FUNCAO DE CUSTO
 # Função de custo Erro Médio Quadrático
 def custo_emq (saida_atual:np.ndarray, saida_real:np.ndarray) -> np.ndarray:
-    m = len(saida_atual)
     error = np.abs(saida_atual-saida_real)**2
-    return np.sum(error, axis=0)/(2*m)
+    return np.sum(error/2, axis=0)
 
 
 
