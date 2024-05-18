@@ -10,16 +10,16 @@ import numpy as np
 
 
 # INICIALIZACAO DOS PESOS
-def pesos ():
-    '''CODE HERE'''
-    pass
+# n_entradas: número de neurônios na entrada
+# n_saidas: número de neurônios na saída
+def pesos (n_entradas, n_saidas, low=-1, high=1):
+    return np.random.uniform(low, high, (n_entradas, n_saidas))
 
 
 
 # INICIALIZACAO DOS BIASES
-def biases ():
-    '''CODE HERE'''
-    pass
+def biases (n_entradas):
+    return np.zeros((n_entrada, 1))
  
 
 
