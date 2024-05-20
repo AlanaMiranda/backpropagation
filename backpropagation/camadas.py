@@ -7,13 +7,13 @@ Este módulo contém funções de operações entre as camadas da rede:
 '''
 
 import numpy as np
-from funcoes import deriv_relu, deriv_sigmoide, deriv_tanh, deriv_custo_emq
+from .funcoes import deriv_relu, deriv_sigmoide, deriv_tanh, deriv_custo_emq
 
 # INICIALIZACAO DOS PESOS
 # n_entradas: número de neurônios na entrada
 # n_saidas: número de neurônios na saída
 def pesos (n_entradas:int, n_saidas:int, low=-1, high=1) -> np.ndarray:
-    return np.random.uniform(low, high, (n_entradas, n_saidas))*0.01
+    return np.random.uniform(low, high, (n_entradas, n_saidas))*0.0001
 
 
 

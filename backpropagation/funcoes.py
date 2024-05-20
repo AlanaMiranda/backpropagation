@@ -37,7 +37,7 @@ def deriv_tanh(entrada: np.ndarray) -> np.ndarray:
 # FUNCAO SIGMOIDE
 # Função
 def ativacao_sigmoide(entrada: np.ndarray) -> np.ndarray:
-    return 1 / (1 + np.exp(-entrada))
+    return np.exp(entrada) / (np.exp(entrada)+1)
 
 
 

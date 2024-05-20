@@ -6,7 +6,7 @@ Este módulo contém funções de avaliação do modelo
 '''
 
 import numpy as np
-import matplotlib.pyplot as plt
+
 
 
 # Matriz de confusao
