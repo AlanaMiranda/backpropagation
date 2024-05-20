@@ -28,7 +28,7 @@ ativação para os neurônios (usar apenas uma camada escondida).
   2.7. Possibilidade de verificar valores dos pesos sinápticos antes e após finalização do
 treinamento.
 
-# Instruções de uso
+<h1 style=color:orange>Instruções de uso</h1>
 1. Importe os dados com _m_ items e _n_ atributos.
 
 2. Coloque os dados no formato matricial e divida em treino, validação e teste.
