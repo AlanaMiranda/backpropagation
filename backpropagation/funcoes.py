@@ -8,63 +8,67 @@ Este módulo contém funções de ativação da saída do neurónio e suas deriv
 import numpy as np
 
 
-# Função ReLu
+# FUNCAO ReLu
+# Função
 def ativacao_relu(entrada: np.ndarray) -> np.ndarray:
-
-    rl = [max(0, x) for x in entrada]
-
-    return np.array(rl)
+    return np.maximum(0, entrada)
 
 
 
-# Função Tangente Hiperbólico
-def ativacao_tanh (entrada: np.ndarray) -> np.ndarray: 
-
-    tanh = [((np.exp(x)-np.exp(-x))/(np.exp(x)+np.exp(-x))) for x in entrada ] 
-
-    return np.array(tanh)
+# Derivada
+def deriv_relu(entrada: np.ndarray) -> np.ndarray:
+    return np.where(entrada > 0, 1, 0)
 
 
 
-# Função Sigmóide
+# FUNCAO TANGENTE HIPERBOLICO
+# Função
+def ativacao_tanh(entrada: np.ndarray) -> np.ndarray:
+    return np.tanh(entrada)
+
+
+
+# Derivada
+def deriv_tanh(entrada: np.ndarray) -> np.ndarray:
+    return 1 - np.tanh(entrada)**2
+
+
+
+# FUNCAO SIGMOIDE
+# Função
 def ativacao_sigmoide(entrada: np.ndarray) -> np.ndarray:
-    
-    sig = [1/(1+np.exp(-x)) for x in entrada]
-    
-    return np.array(sig)
+    return 1 / (1 + np.exp(-entrada))
 
 
-# Funcao de ativacao, aplica a funcao selecionada a um conjunto de dados
+
+# Derivada
+def deriv_sigmoide(entrada: np.ndarray) -> np.ndarray:
+    sig = ativacao_sigmoide(entrada)
+    return sig * (1 - sig)
+
+
+
+# Funcao de ativacao, aplica a funcao selecionada a um conjunto de dados num vetor
 def ativacao(entrada: np.ndarray, func_ativacao: str) -> np.ndarray:
     funcoes_ativacao = {
         'relu': ativacao_relu,
         'tanh': ativacao_tanh,
         'sigmoide': ativacao_sigmoide
     }
-
     if func_ativacao in funcoes_ativacao:
         return funcoes_ativacao[func_ativacao](entrada)
     else:
-        return 'Função de ativação não encontrada'
+        raise ValueError("Função de ativação '{}' não encontrada".format(func_ativacao))
     
 
 
-# Derivada ReLu
-def derivada_relu(entrada):
-    # CODE HERE
-    pass
+# FUNCAO DE CUSTO
+# Erro Médio Quadrático - MSE
+def custo_emq(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
+    return np.mean((saida_atual - saida_real)**2)
 
 
 
-# Função Tangente Hiperbólico
-def derivada_tan_h (entrada):
-    # CODE HERE
-    pass
-
-
-
-# Função Sigmóide
-def derivada_sigmoide(entrada: np.ndarray) -> np.ndarray: 
-    ds =[ np.exp(-x)*(1+np.exp(-x))**2 for x in entrada ]
-
-    return np.array(ds)
+# Derivada da função de custo - MSE
+def deriv_custo_emq(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
+    return saida_atual - saida_real

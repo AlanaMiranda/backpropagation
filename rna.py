@@ -9,59 +9,46 @@ from backpropagation.camadas import *
 from backpropagation.preprocessamento import *
 
 
-# Funcao principal do algoritmo
-def backpropagation (entrada_X:np.ndarray, saida_Y:np.ndarray,
-                     neuronios_camada_escondida:int,ativ:str,
-                     taxa_de_aprendizagem=0.01, epocas=5) -> np.ndarray:
-    
-   
-    # Divisao dos dados em 60-20-20
-    '''CODE HERE'''
-    
-    # Normalizacao dos dados de entrada
-    x_train, y_train = min_max_normalizacao(entrada_X)
-    x_validacao, y_validacao = min_max_normalizacao(entrada_X)
-    x_teste, y_teste = min_max_normalizacao(entrada_X)
-    
-    # Inicializacao arbitraria de pesos e biases
-    W1 = pesos(x_train.shape[0], neuronios_camada_escondida) # Pesos na camada 1
-    B1 = biases(neuronios_camada_escondida) # Biases na camada escondida
-    W2 = pesos(neuronios_camada_escondida,1) # Pesos na camada 2
-    B2 = biases(1) # Biases na camada de saida
-    erro_validacao = [np.array([1])]
-    for _ in range(epocas):
-        for i,j in zip(x_train, y_train):
-            
-            # Fazer propagacao direta
-            S1 = propagacao_direta(x_train[i], W1, B1)
-            Z1 = ativacao(S1, ativ) # Ativacao na camada escondida
-            S2 = propagacao_direta(Z1, W2, B2)
-            Z2 = ativacao(S2, 'sigmoide') # Ativacao na camada de saida
+# Função principal do algoritmo de backpropagation
+def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray, neuronios_camada_escondida: int, f_ativacao: str, taxa_de_aprendizagem=0.01, epocas=5):
+    items, atributos = x_treino.shape
 
-            # Calculo de erro na saida
-            erro_atual = custo_emq(y_train[j], Z2)
+    # Inicialização dos pesos e biases
+    W1 = pesos(atributos, neuronios_camada_escondida)  # Pesos para a camada oculta
+    B1 = biases(neuronios_camada_escondida)  # Biases para a camada oculta
+    W2 = pesos(neuronios_camada_escondida, 1)  # Pesos para a camada de saída
+    B2 = biases(1)  # Biases para a camada de saída
+
+    erros = []
+    for e in range(epocas):
+        for item in range (items):
+            # Propagação direta
+            S2 = propagacao_direta(x_treino[:,item].reshape(-1,1), W1, B1)
+            Z2 = ativacao(S2, f_ativacao)  # Ativação na camada escondida
+            S1 = propagacao_direta(Z2, W2, B2)
+            Z1 = ativacao(S1, 'sigmoide')  # Ativação na camada de saída
+
+            # Cálculo de erro na saída
+            erro_atual = custo_emq(Z1, y_treino[item])
+            erros.append(erro_atual)  # Atualiza a lista de erros da saída
+
+            # Retropropagação na camada de saída
+            d1 = delta_saida(Z1, y_treino[item])
+
+            # Atualizar W2 e B2
+            W2 -= taxa_de_aprendizagem * gradiente(d1,Z2)
         
-            # Comparacao do erro para validacao cruzada
-            if erro_atual > erro_validacao[-1]:
-                break
-            else:
-                erro_validacao.append(erro_atual) # Atualiza a lista de erros da saida
-                # Fazer o retropropagacao
-                # Retropropagacao na segunda camada
-                derivada_Erro_B2 = retropropagacao(S2)
-                derivada_Erro_W2 = retropropagacao(W2)
+            B2 -= taxa_de_aprendizagem * np.sum(d1, axis=1, keepdims=True)#verificar bem isso
 
-                # Atualizar B2 e W2
-                W2 = W2 - taxa_de_aprendizagem * derivada_Erro_W2
-                B2 = B2 - taxa_de_aprendizagem * derivada_Erro_B2
+            # Retropropagação na camada oculta
+            d2 = delta_oculta(d1, W2, S2, f_ativacao)
 
-                # Retropropagacao na primeira camada
-                derivada_Erro_B1 = retropropagacao(S1)
-                derivada_Erro_W1 = retropropagacao(W1)
-                
-                # Atualizar B1 e W1
-                W1 = W1 - taxa_de_aprendizagem * derivada_Erro_W1
-                B1 = B1 - taxa_de_aprendizagem * derivada_Erro_B1
+            # Atualizar W1 e B1
+            W1 -= taxa_de_aprendizagem * gradiente(d2, x_treino[item].reshape(-1,1))
+            B1 -= taxa_de_aprendizagem * np.sum(d2, axis=1, keepdims=True)#verificar bem isso
 
-       
-    return Z2, np.array(erro_validacao), (W1, B1, W2, B2)
+            # Mostrar progresso do treinamento
+        if e % (epocas // 10) == 0 or e == epocas - 1:
+            print(f'Época {e+1}/{epocas}, Erro: {erro_atual}')
+
+    return erros, W1, B1, W2, B2
