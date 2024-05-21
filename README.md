@@ -58,7 +58,7 @@ yt=yt.reshape(-1,1)
 ```
 
 
-Use a função normalizar para dividir em treino, validação, teste e para normalizar os dados.
+Use a função 'normalizar' para dividir em treino, validação, teste e para normalizar os dados.
 
 Por padrão, a função divide na proporção 60% - 20% -20%. Essa proporção pode ser alterada. 
 
