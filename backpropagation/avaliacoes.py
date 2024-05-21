@@ -5,6 +5,7 @@ Este módulo contém funções de avaliação do modelo
 - Gráfico do erro médio quadrático ao longo do treinamento
 '''
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 
@@ -44,7 +45,8 @@ def acuracia(y_real, y_prev):
 
 
 
-# Grafico
-def grafico ():
-    # CODE HERE
-    pass
+# Plotar o gráfico
+def grafico (modelo_treinado):
+    Y=modelo_treinado[0]
+    plt.plot(np.arange(0,len(Y)),Y)
+    plt.show()

@@ -22,9 +22,9 @@ def deriv_relu(entrada: np.ndarray) -> np.ndarray:
 
 
 # FUNCAO TANGENTE HIPERBOLICO
-# Função
-def ativacao_tanh(entrada: np.ndarray) -> np.ndarray:
-    return np.tanh(entrada)
+# # Função
+def ativacao_tanh (entrada: np.ndarray) -> np.ndarray: 
+    return (np.exp(2*entrada)-1)/(np.exp(2*entrada)+1)
 
 
 

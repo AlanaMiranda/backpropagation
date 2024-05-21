@@ -11,9 +11,9 @@ from .preprocessamento import *
 
 # Função principal do algoritmo de backpropagation
 def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
-                    x_validacao: np.ndarray, y_validacao: np.ndarray,
+                    # x_validacao: np.ndarray, y_validacao: np.ndarray,
                     neuronios_camada_escondida: int, f_ativacao: str,
-                    taxa_de_aprendizagem=0.0001, epocas=1500):
+                    taxa_de_aprendizagem=0.0001, epocas=1000):
     
     atributos,items = x_treino.shape
 
@@ -34,7 +34,7 @@ def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
 
             # Cálculo de erro na saída
             erro_atual = custo_emq(Z1, y_treino[item])
-            erros.append(erro_atual)  # Atualiza a lista de erros da saída
+            # erros.append(erro_atual)  # Atualiza a lista de erros da saída
 
             # Retropropagação na camada de saída
             d1 = delta_saida(Z1, y_treino[item])
@@ -51,8 +51,10 @@ def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
             W1 -= taxa_de_aprendizagem * gradiente(d2, x_treino[:,item].reshape(-1,1))
             B1 -= taxa_de_aprendizagem * np.sum(d2, axis=1, keepdims=True)#verificar bem isso
 
-            # Mostrar progresso do treinamento
+        # Mostrar progresso do treinamento
+        erros.append(erro_atual)  # Atualiza a lista de erros da saída
         if epoca % (epocas // 10) == 0 or epoca == epocas - 1:
+               
             print(f'Época {epoca+1}/{epocas}, Erro: {erro_atual}')
 
     return erros, W1, B1, W2, B2
