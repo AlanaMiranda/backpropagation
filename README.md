@@ -131,7 +131,7 @@ from backpropagation.rna import backpropagation
 # Executar a função
 treinar = backpropagation(x_treino, y_treino, 
                           x_validacao, y_validacao,
-                          6, 'sigmoide', 0.0001,1500)
+                          10, 'sigmoide', 0.001,1000)
 
 ```
 
