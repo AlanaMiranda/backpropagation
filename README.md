@@ -41,14 +41,14 @@ treinamento.
 5. Visualize os erro médio ao longo do treinamento usando a função 'grafico'.
 
 
-## Pre processamento
+## Pre processamento (normalização)
 
 Importe os dados e transforme para uma forma matricial. Separe as colunas da entrada e saída.
 
 ```Python
-# Importar e pre-processar os dados
 import pandas as pd
 
+# Importar e processar os dados
 df = pd.read_excel('https://raw.githubusercontent.com/AlanaMiranda/backpropagation/main/dadosmamografia.xlsx', header=None)
 
 Xt=df.values[:,:5] # separar dados de entrada
@@ -57,14 +57,9 @@ yt=df.values[:,-1] # separar dados de saida
 yt=yt.reshape(-1,1)
 ```
 
-
-Use a função 'normalizar' para dividir em treino, validação, teste e para normalizar os dados.
-
-Por padrão, a função divide na proporção 60% - 20% -20%. Essa proporção pode ser alterada. 
-
+Use a função 'normalizar' para dividir em treino, validação, teste e para normalizar os dados.\
+Por padrão, a função divide na proporção 60% - 20% -20%. Essa proporção pode ser alterada.\
 A função normaliza, por padrão, no intervalo $[0;1]$. Esse intervalo pode ser alterado.
-
-
 
 #### Sintaxe:
 ```Python
@@ -73,7 +68,7 @@ normalizar(entrada, saida, tr, val, tst, inf, sup)
 
 ```
 
-#### Parâmetros:
+#### Argumentos:
 * **entrada** - Tipo _array_. Dados de entrada no formato $(m,n)$.
 * **saida** - Tipo _array_. Dados de saida no formato $(m,n)$.
 * **tr** - (Opcional). Tipo _float_. Padrão = 0.6. Proporção para os dados de treino.
@@ -82,13 +77,11 @@ normalizar(entrada, saida, tr, val, tst, inf, sup)
 * **inf** - (Opcional). Tipo _float_. Padrão = 0. Limite inferior da normalização.
 * **sup** - (Opcional). Tipo _float_. Padrão = 1. Limite superior da normalização.
 
-
 #### Retorna:
 Uma tupla contendo três tuplas:
 - (x_treino, y_treino),
 - (x_validacao, y_validacao),
 - (x_teste, y_teste)
-
 
 #### Exemplo:
 ```Python
@@ -96,39 +89,39 @@ from backpropagation.preprocessamento import normalizar
 
 (x_treino, y_treino), (x_validacao, y_validacao), (x_teste, y_teste) = normalizar(Xt, yt)
 
-# Fazer transposta da matriz de entrada
-x_treino = x_treino.T
+# Fazer transposta nos dados de entrada, para treino, validacao e teste
+x_treino=x_treino.T
+x_validacao = x_validacao.T
+x_teste = x_teste.T
 ```
 
 ## Treinamento do modelo
 Use a função 'backpropagation' para treinar o modelo.
 
 #### Sintaxe:
-
 ```Python
 backpropagation(x_treino, y_treino, neuronios_camada_escondida,
                 f_ativacao, taxa_de_aprendizagem, epocas)
 ```
 
-#### Parâmetros:
+#### Argumentos:
 * **x_treino** - Tipo _array_, dimensões _(n,m)_. Dados de treino para entrada da rede neural.
 * **y_treino** - Tipo _array_, dimensões _(m,1)_. Dados de treino para saida da rede neural.
-* **x_validacao _(por implementar)_** - Tipo _array_, dimensões _(n,m)_. Dados de treino para entrada da rede neural.
-* **y_validacao _(por implementar)_** - Tipo _array_, dimensões _(m,1)_. Dados de treino para saida da rede neural.
+* **x_validacao** - Tipo _array_, dimensões _(n,m)_. Dados de treino para entrada da rede neural.
+* **y_validacao** - Tipo _array_, dimensões _(m,1)_. Dados de treino para saida da rede neural.
 * **neuronios_camada_escondida** - Tipo _int_. Número de neurônios na camada escondida.
 * **f_ativacao** - Tipo _str_. Funções de ativação na camada escondida. As funções podem ser 'relu', 'tanh' ou 'sigmoide'.
 * **taxa_de_aprendizagem** (Opcional)- Tipo _bool_. Padrão = 0.0001.  Taxa de aprendizagem para atualização dos parâmetros.
 * **epocas** (Opcional) - Tipo _int_. Padrão = 1000.  Número de épocas de treinamento.
 
-
 #### Retorna:
-* **erros** - Tipo _list_. Lista de erros ao longo do treinamento.
+* **erro_medio_treino** - Tipo _list_. Lista de erros do treinamento.
+* **erro_medio_validacao** - Tipo _list_. Lista de erros da validação.
 * **W1** - Tipo _array_. Pesos da primeira camada.
 * **B1** - Tipo _array_. Biases da primeira camada.
+* **f_ativacao** - Tipo _str_. A função de ativação da camada oculta.
 * **W2** - Tipo _array_. Pesos da segunda camada.
 * **B2** - Tipo _array_. Biases da segunda camada.
-
-
 
 #### Exemplo:
 Criar uma variável e chamar a função.
@@ -136,35 +129,107 @@ Criar uma variável e chamar a função.
 from backpropagation.rna import backpropagation
 
 # Executar a função
-treinar = backpropagation(x_treino, y_treino, 6, 'sigmoide', 0.00001, 1500)
+treinar = backpropagation(x_treino, y_treino, 
+                          x_validacao, y_validacao,
+                          6, 'sigmoide', 0.0001,1500)
 
 ```
 
 
-## Plotar gráfico
 
+## Plotar gráfico
 Para plotar gráficos importamos a função gráfico do módulo avaliações e passamos como parâmetro o modelo treinado:
-#### Sintaxe
+
+#### Sintaxe:
 ```Python
 grafico(modelo_treinado, cor)
 ```
 
-#### Parâmetros:
+#### Argumentos:
 * **modelo_treinado** - Tipo _tuple_. Variável que é retornada pela função backpropagation.
-* **cor** - Tipo _str_. Cor do gráfico.
+* **cor** - (Opcional). Tipo _list_. Padrão=['green', 'orange']. Lista de cores  para os gráficos.
 
+#### Retorna:
+* Gráfico do erro médio quadrático para os dados de treino e da validação cruzada. 
 
 #### Exemplo:
 ```Python
-# Importar a função
 from backpropagation.avaliacoes import grafico
 
-# Executar a função
-grafico(treinar, 'orange')
+# Plotar o gráfico
+grafico(treinar, ['orange', 'magenta'])
 
+```
+
+## Fazer previsões
+Podemos usar o modelo treinado para fazer previsões no conjunto de teste.
+
+#### Sintaxe:
+```Python
+previsao(modelo_treinado, x_teste)
+```
+
+#### Argumentos:
+* **modelo_treinado** - Tipo _tuple_. Variável que é retornada pela função backpropagation.
+* **x_teste** - Tipo _array_. Dados do conjunto de teste na dimensão $(n,m)$.
+
+#### Retorna:
+* **y_prev** - Tipo _array_. Lista com saída das previsões do modelo.
+
+#### Exemplo:
+```Python
+from backpropagation.avaliacoes import previsao
+
+# Fazer previsões
+y_prev = previsao(treinar, x_teste)
+```
+
+## Matriz de confusão
+A matriz de confusão mostra as previsões do modelo para cada classe.
+
+#### Sintaxe:
+```Python
+matriz_confusao(y_real, y_prev)
+
+```
+
+#### Argumentos:
+* **y_real** - Tipo _array_. Lista com saída do grupo de teste.
+* **y_prev** - Tipo _array_. Lista de saída das previsões do modelo.
+
+#### Retorna:
+* Matriz de confusão.
+
+#### Exemplo:
+```Python
+from backpropagation.avaliacoes import matriz_confusao
+
+# Matriz de confusão
+matriz_confusao(y_teste, y_prev)
 ```
 
 
 
+## Acurácia
+A acurácia mostra a percentagem de acertos do modelo.
 
+#### Sintaxe:
+```Python
+acuracia(y_real, y_prev)
+```
+
+#### Argumentos:
+* **y_real** - Tipo _array_. Lista com saída do grupo de teste.
+* **y_prev** - Tipo _List_. Lista de saída das previsões do modelo.
+
+#### Retorna:
+* Acurácia - Tipo _float_.
+
+#### Exemplo:
+```Python
+from backpropagation.avaliacoes import acuracia
+
+# Acurácia
+acuracia(y_teste, y_prev)
+```
 

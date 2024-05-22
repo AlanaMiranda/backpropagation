@@ -11,9 +11,9 @@ from .preprocessamento import *
 
 # Função principal do algoritmo de backpropagation
 def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
-                    # x_validacao: np.ndarray, y_validacao: np.ndarray,
+                    x_validacao: np.ndarray, y_validacao: np.ndarray,
                     neuronios_camada_escondida: int, f_ativacao: str,
-                    taxa_de_aprendizagem=0.0001, epocas=1000):
+                    taxa_de_aprendizagem=0.001, epocas=1000):
     
     atributos,items = x_treino.shape
 
@@ -23,8 +23,10 @@ def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
     W2 = pesos(neuronios_camada_escondida, 1)  # Pesos para a camada de saída
     B2 = biases(1)  # Biases para a camada de saída
 
-    erros = []
+    erro_medio_treino = []
+    erro_medio_validacao = []
     for epoca in range(epocas):
+        erros =[]
         for item in range (items):
             # Propagação direta
             S2 = propagacao_direta(x_treino[:,item].reshape(-1,1), W1, B1)
@@ -34,27 +36,37 @@ def backpropagation(x_treino: np.ndarray, y_treino: np.ndarray,
 
             # Cálculo de erro na saída
             erro_atual = custo_emq(Z1, y_treino[item])
-            # erros.append(erro_atual)  # Atualiza a lista de erros da saída
+            erros.append(erro_atual)  # Atualiza a lista de erro Medio
 
             # Retropropagação na camada de saída
-            d1 = delta_saida(Z1, y_treino[item])
+            d2 = delta_saida(Z1, y_treino[item])
 
             # Atualizar W2 e B2
-            W2 -= taxa_de_aprendizagem * gradiente(d1,Z2)
-        
-            B2 -= taxa_de_aprendizagem * np.sum(d1, axis=1, keepdims=True)#verificar bem isso
+            W2 -= taxa_de_aprendizagem * gradiente(d2,Z2)
+            B2 -= taxa_de_aprendizagem * d2
 
             # Retropropagação na camada oculta
-            d2 = delta_oculta(d1, W2, S2, f_ativacao)
+            d1 = delta_oculta(d2, W2, S2, f_ativacao)
 
             # Atualizar W1 e B1
-            W1 -= taxa_de_aprendizagem * gradiente(d2, x_treino[:,item].reshape(-1,1))
-            B1 -= taxa_de_aprendizagem * np.sum(d2, axis=1, keepdims=True)#verificar bem isso
+            W1 -= taxa_de_aprendizagem * gradiente(d1, x_treino[:,item].reshape(-1,1))
+            B1 -= taxa_de_aprendizagem * d1
+
+        # Calcula o MSE para o lote do treino
+        emq_treino = np.mean(erros)
+        erro_medio_treino.append(emq_treino)  # Atualiza a lista de erros da saída
+
+        # Calcular o erro nos dados de validacao
+        emq_val = calc_erro_validacao(x_validacao, y_validacao, W1,B1, f_ativacao, W2, B2)
+        erro_medio_validacao.append(emq_val)
 
         # Mostrar progresso do treinamento
-        erros.append(erro_atual)  # Atualiza a lista de erros da saída
-        if epoca % (epocas // 10) == 0 or epoca == epocas - 1:
-               
-            print(f'Época {epoca+1}/{epocas}, Erro: {erro_atual}')
+        if epoca % (epocas // 10) == 0 or epoca == epocas - 1:        
+            print(f'Época {epoca+1}/{epocas}, \t | Erro_tr: {emq_treino}, \t | Erro_val: {emq_val}')
 
-    return erros, W1, B1, W2, B2
+        # Critério de parada: Validação cruzada
+        if (epoca>1) and (erro_medio_validacao[-1] >= erro_medio_validacao[-2]):
+            print('Treinamento finalizado por validação cruzada após {} épocas.'.format(epoca))
+            break
+
+    return erro_medio_treino, erro_medio_validacao, W1, B1, f_ativacao, W2, B2

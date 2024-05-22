@@ -43,8 +43,7 @@ def ativacao_sigmoide(entrada: np.ndarray) -> np.ndarray:
 
 # Derivada
 def deriv_sigmoide(entrada: np.ndarray) -> np.ndarray:
-    sig = ativacao_sigmoide(entrada)
-    return sig * (1 - sig)
+    return entrada * (1 - entrada)
 
 
 
@@ -65,7 +64,7 @@ def ativacao(entrada: np.ndarray, func_ativacao: str) -> np.ndarray:
 # FUNCAO DE CUSTO
 # Erro Médio Quadrático - MSE
 def custo_emq(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
-    return np.mean((saida_atual - saida_real)**2)
+    return (saida_atual - saida_real)**2
 
 
 

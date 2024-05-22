@@ -7,13 +7,14 @@ Este módulo contém funções de operações entre as camadas da rede:
 '''
 
 import numpy as np
-from .funcoes import deriv_relu, deriv_sigmoide, deriv_tanh, deriv_custo_emq
+from .funcoes import deriv_relu, deriv_sigmoide, deriv_tanh, deriv_custo_emq, ativacao, custo_emq
 
 # INICIALIZACAO DOS PESOS
 # n_entradas: número de neurônios na entrada
 # n_saidas: número de neurônios na saída
 def pesos (n_entradas:int, n_saidas:int, low=-1, high=1) -> np.ndarray:
-    return np.random.uniform(low, high, (n_entradas, n_saidas))*0.0001
+    return np.random.uniform(low, high, (n_entradas, n_saidas))*0.1
+    # return np.random.randn(n_entradas, n_saidas)*0.1
 
 
 
@@ -55,3 +56,26 @@ def delta_oculta(d_saida: np.ndarray, pesos: np.ndarray, saida_atual: np.ndarray
 def gradiente(delta: np.ndarray, entrada: np.ndarray) -> np.ndarray:
     grad = np.dot(delta, entrada.T)
     return grad.T
+
+
+
+# Calculo de erro nos dados de validacao
+def calc_erro_validacao(x_val: np.ndarray, y_val: np.ndarray,
+                      pesos1: np.ndarray, bias1:np.ndarray, ativacao1:str, 
+                      pesos2: np.ndarray, bias2:np.ndarray):
+    
+    val_items = x_val.shape[1]
+    
+    erro_val=[]
+    for item in range(val_items):
+    
+        S1_val = propagacao_direta(x_val[:,item].reshape(-1,1), pesos1, bias1)
+        Z1_val = ativacao(S1_val, ativacao1)
+        S2_val = propagacao_direta(Z1_val, pesos2, bias2)
+        Z2_val = ativacao(S2_val, 'sigmoide')
+
+        # Calcula o erro medio quadratico para validacao
+        emq_val = custo_emq(Z2_val, y_val[item])
+        erro_val.append(emq_val)
+
+    return np.mean(erro_val)
