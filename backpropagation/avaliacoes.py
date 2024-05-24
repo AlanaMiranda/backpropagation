@@ -7,56 +7,54 @@ Este módulo contém funções de avaliação do modelo
 
 import matplotlib.pyplot as plt
 import numpy as np
-from .camadas import propagacao_direta, ativacao
+from .camadas import propagacao_direta
 
 
 
 # Matriz de confusao
 def matriz_confusao(y_real, y_prev):
-    assert len(y_real)==len(y_prev), \
+    assert y_real.shape == y_prev.shape, \
         'Verifique as dimensões dos dados de saída real e saída prevista'
-    c_matrix = np.zeros((2,2), dtype=np.int32)
-    labels =[0,1]
-    count=0
-    for _, _ in zip(y_real, y_prev):
-        real = y_real[count]
-        prev = y_prev[count]
-        c_matrix[real, prev]+=1
-        count+=1
 
-    for i in range(c_matrix.shape[0]):
-        for j in range(c_matrix.shape[1]):
-            text = plt.text(j,i, c_matrix[i,j], color="red")
+    # Inicializa a matriz de confusão
+    c_matrix = np.zeros((2, 2), dtype=np.int32)
 
-    x_ticks = labels
-    y_ticks = labels
+    # Incrementa a matriz de confusão com base nos valores reais e previstos
+    for real, prev in zip(y_real[0], y_prev[0]):
+        c_matrix[real, prev] += 1
 
-    plt.imshow(c_matrix)
-    plt.xticks(ticks=x_ticks,labels=[0,1], rotation=0)
-    plt.yticks(ticks=y_ticks,labels=[0,1])
+    # Configuração do gráfico
+    plt.figure(figsize=(6, 6))
+    plt.imshow(c_matrix, interpolation='nearest', cmap=plt.cm.Blues)
+    plt.title("Matriz de Confusão")
+ 
+    # Definição de rótulos e ticks
+    tick_marks = np.arange(2)
+    plt.xticks(tick_marks, [0, 1])
+    plt.yticks(tick_marks, [0, 1])
     
-    plt.title("Matriz de confusão")
-    plt.xlabel("Previsao do modelo")
-    plt.ylabel("Valores verdadeiros")
-    plt.show()  
+    # Adição dos valores nas células da matriz
+    thresh = c_matrix.max() / 2.
+    for i, j in np.ndindex(c_matrix.shape):
+        plt.text(j, i, format(c_matrix[i, j], 'd'),
+                 horizontalalignment="center",
+                 color="white" if c_matrix[i, j] > thresh else "black")
+    
+    # Labels dos eixos
+    plt.ylabel('Valores Verdadeiros')
+    plt.xlabel('Previsão do Modelo')
+    plt.tight_layout()
+    plt.show()
 
 
 
 # Acuracia
 def acuracia(y_real, y_prev):
-    assert len(y_real)==len(y_prev), \
+    assert y_real.shape == y_prev.shape, \
         'Verifique as dimensões dos dados de saída real e saída prevista'
-    acc = 0
-
-    count=0
-    for _, _ in zip(y_real, y_prev):
-        real = y_real[count]
-        prev = y_prev[count]
-        if real == prev:
-            acc+=1
-        count+=1
     
-    acc = acc/len(y_real)
+    # Calcula a acurácia como a razão de previsões corretas
+    acc = np.sum(y_real == y_prev) / len(y_real[0])
     return acc
 
 
@@ -76,21 +74,27 @@ def grafico (modelo_treinado, cores:list=['green','orange'])->plt.figure:
     plt.show()
 
 
-# fazer previsoes
-def previsao(modelo_treinado, x_test:np.ndarray):
-    y_prev = []
-    val_items = x_test.shape[1]
 
-    pesos1, bias1  = modelo_treinado[2], modelo_treinado[3]
+# Fazer previsoes
+def previsao(modelo_treinado:tuple, x_test:np.ndarray,
+             tamanho_do_lote:int=1)-> np.ndarray:
+
+    pesos2, bias2  = modelo_treinado[2], modelo_treinado[3]
     f_ativ = modelo_treinado[4]
-    pesos2, bias2  = modelo_treinado[5], modelo_treinado[6]
+    pesos1, bias1  = modelo_treinado[5], modelo_treinado[6]
 
-    for item in range(val_items):
+    y_prev =np.array([[]])
+    item = 0
+    while item < x_test.shape[1]:
+        _, ativacao_saida, _ = propagacao_direta(
+                                    x_test[:, item: item+tamanho_do_lote],
+                                    x_test[:, item: item+tamanho_do_lote],
+                                    pesos2, bias2, f_ativ, pesos1, bias1)
+
+        y_prev = np.concatenate((y_prev,ativacao_saida),
+                                axis=1) # Atualiza a lista de previsoes
+        item += tamanho_do_lote
     
-        S1_val = propagacao_direta(x_test[:,item].reshape(-1,1), pesos1, bias1)
-        Z1_val = ativacao(S1_val, f_ativ)
-        S2_val = propagacao_direta(Z1_val, pesos2, bias2)
-        Z2_val = ativacao(S2_val, 'sigmoide')
-        y_prev.append(1) if Z2_val>0.5 else y_prev.append(0)
+    y_prev = np.where(y_prev>0.5,1,0)
 
-    return np.array(y_prev)
+    return y_prev

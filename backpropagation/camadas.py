@@ -13,8 +13,7 @@ from .funcoes import deriv_relu, deriv_sigmoide, deriv_tanh, deriv_custo_emq, at
 # n_entradas: número de neurônios na entrada
 # n_saidas: número de neurônios na saída
 def pesos (n_entradas:int, n_saidas:int, low=-1, high=1) -> np.ndarray:
-    return np.random.uniform(low, high, (n_entradas, n_saidas))*0.1
-    # return np.random.randn(n_entradas, n_saidas)*0.1
+    return np.random.uniform(low, high, (n_entradas, n_saidas))
 
 
 
@@ -24,11 +23,31 @@ def biases (n_entradas:int) -> np.ndarray:
  
 
 
+# Retorna uma matriz com a soma ponderada entre pesos e biases
+def soma_ponderada (entrada: np.ndarray, pesos: np.ndarray, bias:np.ndarray) -> np.ndarray: 
+    return np.dot(pesos.T, entrada) + bias
+
+
+
 # PROPAGACAO DIRETA
 # Faz o feedforward entre as camadas
-# Retorna uma matriz com a soma ponderada entre pesos e biases
-def propagacao_direta (entrada: np.ndarray, pesos: np.ndarray, bias:np.ndarray) -> np.ndarray: 
-    return np.dot(pesos.T, entrada) + bias
+def propagacao_direta(lote_x_treino: np.ndarray, lote_y_treino:np.ndarray,
+                      W2:np.ndarray, B2:np.ndarray, f_ativacao:str,
+                      W1:np.ndarray, B1:np.ndarray
+                      )->tuple[np.ndarray, np.ndarray, np.ndarray]:
+ 
+    # Propagação direta p/camada oculta          
+    soma_oculta = soma_ponderada(lote_x_treino, W2, B2)
+    ativacao_oculta = ativacao(soma_oculta, f_ativacao)  # Ativação na camada escondida
+
+    # Propagação direta p/camada saida 
+    soma_saida = soma_ponderada(ativacao_oculta, W1, B1)
+    ativacao_saida = ativacao(soma_saida, 'sigmoide')  # Ativação na camada de saída
+    
+    # Cálculo de erro na saída
+    erro_atual = custo_emq(ativacao_saida,lote_y_treino)
+    
+    return ativacao_oculta, ativacao_saida, erro_atual
 
 
 
@@ -58,24 +77,23 @@ def gradiente(delta: np.ndarray, entrada: np.ndarray) -> np.ndarray:
     return grad.T
 
 
-
 # Calculo de erro nos dados de validacao
 def calc_erro_validacao(x_val: np.ndarray, y_val: np.ndarray,
-                      pesos1: np.ndarray, bias1:np.ndarray, ativacao1:str, 
-                      pesos2: np.ndarray, bias2:np.ndarray):
-    
-    val_items = x_val.shape[1]
-    
-    erro_val=[]
-    for item in range(val_items):
-    
-        S1_val = propagacao_direta(x_val[:,item].reshape(-1,1), pesos1, bias1)
-        Z1_val = ativacao(S1_val, ativacao1)
-        S2_val = propagacao_direta(Z1_val, pesos2, bias2)
-        Z2_val = ativacao(S2_val, 'sigmoide')
+                      pesos2: np.ndarray, bias2:np.ndarray, f_ativacao:str, 
+                      pesos1: np.ndarray, bias1:np.ndarray, tamanho_do_lote:int=1):
+ 
+    erro_val =np.array([[]])
+    item = 0
+    while item < x_val.shape[1]:
 
-        # Calcula o erro medio quadratico para validacao
-        emq_val = custo_emq(Z2_val, y_val[item])
-        erro_val.append(emq_val)
+        _, _, err = propagacao_direta(
+                                    x_val[:, item: item+tamanho_do_lote],
+                                    y_val[:, item: item+tamanho_do_lote],
+                                    pesos2, bias2, f_ativacao, pesos1, bias1)
 
-    return np.mean(erro_val)
+        erro_val = np.concatenate((erro_val,err), axis=1) # Atualiza a lista de erro Medio
+        item += tamanho_do_lote
+
+    erro_val = 0.5*np.mean(erro_val)
+
+    return erro_val

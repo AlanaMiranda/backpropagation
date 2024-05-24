@@ -31,14 +31,11 @@ treinamento.
 
 # Instruções de uso
 1. Importe os dados com _m_ items e _n_ atributos.
-
 2. Coloque os dados no formato matricial.
-   
 3. Normalize os dados e divida em treino, validação e teste usando a função 'normalizar'.
-
 4. Treine o modelo usando a função 'backpropagation'.
-   
 5. Visualize os erro médio ao longo do treinamento usando a função 'grafico'.
+6. Visualize a acurácia usando a função 'acuracia'.
 
 
 ## Pre processamento (normalização)
@@ -70,7 +67,7 @@ normalizar(entrada, saida, tr, val, tst, inf, sup)
 
 #### Argumentos:
 * **entrada** - Tipo _array_. Dados de entrada no formato $(m,n)$.
-* **saida** - Tipo _array_. Dados de saida no formato $(m,n)$.
+* **saida** - Tipo _array_. Dados de saida no formato $(m,1)$.
 * **tr** - (Opcional). Tipo _float_. Padrão = 0.6. Proporção para os dados de treino.
 * **val** - (Opcional). Tipo _float_. Padrão = 0.2. Proporção para os dados de validação.
 * **tst** - (Opcional). Tipo _float_. Padrão = 0.2. Proporção para os dados de teste.
@@ -78,7 +75,7 @@ normalizar(entrada, saida, tr, val, tst, inf, sup)
 * **sup** - (Opcional). Tipo _float_. Padrão = 1. Limite superior da normalização.
 
 #### Retorna:
-Uma tupla contendo três tuplas:
+Uma tupla contendo três tuplas de treino validação e teste:
 - (x_treino, y_treino),
 - (x_validacao, y_validacao),
 - (x_teste, y_teste)
@@ -89,10 +86,14 @@ from backpropagation.preprocessamento import normalizar
 
 (x_treino, y_treino), (x_validacao, y_validacao), (x_teste, y_teste) = normalizar(Xt, yt)
 
-# Fazer transposta nos dados de entrada, para treino, validacao e teste
-x_treino=x_treino.T
+# Fazer transposta nos dados de entrada e saida
+x_treino = x_treino.T
 x_validacao = x_validacao.T
 x_teste = x_teste.T
+
+y_treino = y_treino.T
+y_validacao = y_validacao.T
+y_teste = y_teste.T
 ```
 
 ## Treinamento do modelo
@@ -100,8 +101,8 @@ Use a função 'backpropagation' para treinar o modelo.
 
 #### Sintaxe:
 ```Python
-backpropagation(x_treino, y_treino, neuronios_camada_escondida,
-                f_ativacao, taxa_de_aprendizagem, epocas)
+backpropagation(x_treino, y_treino, x_validacao, y_validacao, neuronios_camada_escondida,
+                f_ativacao, tamanho_do_lote, taxa_de_aprendizagem, epocas)
 ```
 
 #### Argumentos:
@@ -111,8 +112,9 @@ backpropagation(x_treino, y_treino, neuronios_camada_escondida,
 * **y_validacao** - Tipo _array_, dimensões _(m,1)_. Dados de treino para saida da rede neural.
 * **neuronios_camada_escondida** - Tipo _int_. Número de neurônios na camada escondida.
 * **f_ativacao** - Tipo _str_. Funções de ativação na camada escondida. As funções podem ser 'relu', 'tanh' ou 'sigmoide'.
+* **tamanho_do_lote** (Opcional)- Tipo _int_. Padrão = 100.  Número de amostras por treinamento.
 * **taxa_de_aprendizagem** (Opcional)- Tipo _bool_. Padrão = 0.0001.  Taxa de aprendizagem para atualização dos parâmetros.
-* **epocas** (Opcional) - Tipo _int_. Padrão = 1000.  Número de épocas de treinamento.
+* **epocas** (Opcional) - Tipo _int_. Padrão = 1000.  Número de épocas de treinamento. O número de épocas não pode ser inferior a 10.
 
 #### Retorna:
 * **erro_medio_treino** - Tipo _list_. Lista de erros do treinamento.
@@ -131,7 +133,7 @@ from backpropagation.rna import backpropagation
 # Executar a função
 treinar = backpropagation(x_treino, y_treino, 
                           x_validacao, y_validacao,
-                          10, 'sigmoide', 0.001,1000)
+                          15, 'sigmoide')
 
 ```
 
