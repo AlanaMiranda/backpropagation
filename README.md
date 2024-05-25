@@ -102,7 +102,7 @@ Use a função 'backpropagation' para treinar o modelo.
 #### Sintaxe:
 ```Python
 backpropagation(x_treino, y_treino, x_validacao, y_validacao, neuronios_camada_escondida,
-                f_ativacao, tamanho_do_lote, taxa_de_aprendizagem, epocas)
+                f_ativacao, tamanho_do_lote, taxa_de_aprendizagem, epocas, parada_antecipada)
 ```
 
 #### Argumentos:
@@ -115,15 +115,19 @@ backpropagation(x_treino, y_treino, x_validacao, y_validacao, neuronios_camada_e
 * **tamanho_do_lote** (Opcional)- Tipo _int_. Padrão = 100.  Número de amostras por treinamento.
 * **taxa_de_aprendizagem** (Opcional)- Tipo _bool_. Padrão = 0.0001.  Taxa de aprendizagem para atualização dos parâmetros.
 * **epocas** (Opcional) - Tipo _int_. Padrão = 1000.  Número de épocas de treinamento. O número de épocas não pode ser inferior a 10.
+* **parada_antecipada** (Opcional) - Tipo _int_. Padrão = 5.  Número de épocas de treinamento que devem ocorrer sem registar melhoria nos erros de validacao.
 
 #### Retorna:
 * **erro_medio_treino** - Tipo _list_. Lista de erros do treinamento.
 * **erro_medio_validacao** - Tipo _list_. Lista de erros da validação.
-* **W1** - Tipo _array_. Pesos da primeira camada.
-* **B1** - Tipo _array_. Biases da primeira camada.
-* **f_ativacao** - Tipo _str_. A função de ativação da camada oculta.
-* **W2** - Tipo _array_. Pesos da segunda camada.
-* **B2** - Tipo _array_. Biases da segunda camada.
+* **pesos_iniciais** - Tipo _tuple_. Tupla contendo pesos inciais antes do treinamento (W2, B2, W1, B1).
+* **pesos_finais** - Tipo _tuple_. Tupla contendo pesos finais após o treinamento (W2, B2, f_ativacao, W1, B1).
+  - **W2** - Tipo _array_. Pesos da primeira camada.
+  - **B2** - Tipo _array_. Biases da primeira camada.
+  - **f_ativacao** - Tipo _str_. A função de ativação da camada oculta.
+  - **W1** - Tipo _array_. Pesos da segunda camada.
+  - **B1** - Tipo _array_. Biases da segunda camada.\
+Note que nos _pesos_iniciais_ a função de ativação não é retornada.
 
 #### Exemplo:
 Criar uma variável e chamar a função.

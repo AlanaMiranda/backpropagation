@@ -78,10 +78,12 @@ def grafico (modelo_treinado, cores:list=['green','orange'])->plt.figure:
 # Fazer previsoes
 def previsao(modelo_treinado:tuple, x_test:np.ndarray,
              tamanho_do_lote:int=1)-> np.ndarray:
+    
+    parametros_da_rede = modelo_treinado[3]
 
-    pesos2, bias2  = modelo_treinado[2], modelo_treinado[3]
-    f_ativ = modelo_treinado[4]
-    pesos1, bias1  = modelo_treinado[5], modelo_treinado[6]
+    pesos2, bias2  = parametros_da_rede[0], parametros_da_rede[1]
+    f_ativ = parametros_da_rede[2]
+    pesos1, bias1  = parametros_da_rede[3], parametros_da_rede[4]
 
     y_prev =np.array([[]])
     item = 0
