@@ -65,9 +65,10 @@ def ativacao(entrada: np.ndarray, func_ativacao: str) -> np.ndarray:
 # Erro Médio Quadrático - MSE
 def custo_emq(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
     return (saida_atual - saida_real)**2
-
+# Eleva ao quadrado a diferença entre a saída atual e saída real para obter o erro quadrático.
 
 
 # Derivada da função de custo - MSE
 def deriv_custo_emq(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
     return saida_atual - saida_real
+# calcula a derivada da função de custo do Erro Médio Quadrático 
