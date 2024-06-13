@@ -61,7 +61,7 @@ def propagacao_direta(lote_x_treino: np.ndarray, lote_y_treino:np.ndarray,
 # Delta na camada de saída (d1)
 def delta_saida(saida_atual: np.ndarray, saida_real: np.ndarray) -> np.ndarray:
     return deriv_custo_emq(saida_atual, saida_real) * deriv_sigmoide(saida_atual)
-
+# O delta é obtido multiplicando a derivada do custo pela derivada da função de ativação sigmoide
 
 
 # Delta na camada escondida (d2)
@@ -82,7 +82,7 @@ def delta_oculta(d_saida: np.ndarray, pesos: np.ndarray, saida_atual: np.ndarray
 def gradiente(delta: np.ndarray, entrada: np.ndarray) -> np.ndarray:
     grad = np.dot(delta, entrada.T)
     return grad.T
-
+# O gradiente dos pesos é calculado multiplicando o delta da camada pela transposta das ativações da camada anterior
 
 # Calculo de erro nos dados de validacao
 def calc_erro_validacao(x_val: np.ndarray, y_val: np.ndarray,
