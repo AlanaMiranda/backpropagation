@@ -85,6 +85,7 @@ def gradiente(delta: np.ndarray, entrada: np.ndarray) -> np.ndarray:
 # O gradiente dos pesos é calculado multiplicando o delta da camada pela transposta das ativações da camada anterior
 
 # Calculo de erro nos dados de validacao
+# Propaga os dados de validação através da rede e calcula o erro em cada lote de dados.
 def calc_erro_validacao(x_val: np.ndarray, y_val: np.ndarray,
                       pesos2: np.ndarray, bias2:np.ndarray, f_ativacao:str, 
                       pesos1: np.ndarray, bias1:np.ndarray, tamanho_do_lote:int=1):
